@@ -32,6 +32,7 @@
   --disp:"Archivo Black",system-ui,sans-serif;
   --body:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --gut:clamp(20px,5vw,64px);
+  --hdr:73px;   /* sticky header height: 13+46+13 + 1px border */
   --ease:cubic-bezier(.4,0,.2,1);
   --spring:cubic-bezier(.2,1.3,.4,1);
 }
@@ -101,12 +102,12 @@ p{margin:0}
 
 /* ===== AMBIENT FIELD (blobs + motes + cursor spotlight) ================== */
 .field{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-.blob{position:absolute;border-radius:50%;filter:blur(66px);opacity:.72;will-change:transform}
+.blob{position:absolute;border-radius:50%;filter:blur(64px);opacity:.9;will-change:transform}
 .blob.b1{width:52vw;height:52vw;max-width:620px;max-height:620px;left:-10%;top:-22%;
-  background:radial-gradient(circle, rgba(198,255,61,.26), transparent 66%);
+  background:radial-gradient(circle, rgba(198,255,61,.32), transparent 66%);
   animation:float1 26s ease-in-out infinite}
 .blob.b2{width:44vw;height:44vw;max-width:520px;max-height:520px;right:-12%;top:18%;
-  background:radial-gradient(circle, rgba(74,222,128,.13), transparent 66%);
+  background:radial-gradient(circle, rgba(74,222,128,.16), transparent 66%);
   animation:float2 34s ease-in-out infinite}
 .blob.b3{width:34vw;height:34vw;max-width:400px;max-height:400px;left:36%;bottom:-24%;
   background:radial-gradient(circle, rgba(255,92,108,.10), transparent 66%);
@@ -155,13 +156,21 @@ p{margin:0}
 .amt input{width:100%;min-width:0;background:transparent;border:0;color:var(--ink);
   font-family:var(--disp);font-size:inherit;letter-spacing:inherit;padding:0;-moz-appearance:textfield}
 .amt input::-webkit-outer-spin-button,.amt input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.rail{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:999px;
-  background:var(--line);margin:16px 0 0;cursor:pointer}
-.rail::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;
-  background:var(--lime);border:0;cursor:grab;box-shadow:0 0 0 0 rgba(198,255,61,.25);
-  transition:box-shadow .2s var(--ease)}
+/* The input is 32px tall so a thumb can actually grab it; the 4px track is
+   drawn behind it, inset by the knob radius so fill and knob agree. */
+.railwrap{position:relative;display:flex;align-items:center;height:32px;margin-top:12px}
+.railtrack{position:absolute;left:13px;right:13px;height:4px;border-radius:999px;
+  background:var(--line);pointer-events:none;overflow:hidden}
+.railtrack i{display:block;height:4px;border-radius:999px;background:var(--lime);width:9.6%}
+.rail{-webkit-appearance:none;appearance:none;position:relative;width:100%;height:32px;
+  background:transparent;margin:0;cursor:pointer}
+.rail::-webkit-slider-runnable-track{height:32px;background:transparent;border:0}
+.rail::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:3px;
+  border-radius:50%;background:var(--lime);border:0;cursor:grab;
+  box-shadow:0 0 0 0 rgba(198,255,61,.25);transition:box-shadow .2s var(--ease)}
 .rail:hover::-webkit-slider-thumb{box-shadow:0 0 0 6px rgba(198,255,61,.12)}
 .rail:active::-webkit-slider-thumb{box-shadow:0 0 0 12px rgba(198,255,61,.16)}
+.rail::-moz-range-track{height:32px;background:transparent;border:0}
 .rail::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--lime);border:0}
 .out{margin-top:20px;border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .out .row{display:flex;align-items:center;gap:12px;padding:14px 16px;font-size:15px;font-weight:600}
@@ -384,10 +393,12 @@ p{margin:0}
 .faq{border-top:1px solid var(--line)}
 .faq .wrap{padding-block:clamp(48px,6vw,88px)}
 .faq h2{font-size:clamp(28px,3.4vw,42px);margin-top:14px}
-details{border-bottom:1px solid var(--line);padding:20px 0}
+details{border-bottom:1px solid var(--line)}
 details:first-of-type{border-top:1px solid var(--line);margin-top:28px}
+/* padding lives on the summary, not the details, so the whole row is tappable */
 summary{cursor:pointer;list-style:none;font-weight:700;font-size:17px;display:flex;
-  justify-content:space-between;gap:20px;align-items:center;transition:color .2s var(--ease)}
+  justify-content:space-between;gap:20px;align-items:center;min-height:44px;
+  padding-block:16px;transition:color .2s var(--ease)}
 summary:hover{color:var(--lime)}
 summary::-webkit-details-marker{display:none}
 summary::after{content:"";width:13px;height:13px;flex:none;
@@ -398,7 +409,7 @@ details[open] summary::after{transform:rotate(90deg);
   background:linear-gradient(var(--lime),var(--lime)) center/100% 2.4px no-repeat}
 @keyframes unfold{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 details[open] p{animation:unfold .4s var(--ease) both}
-details p{margin-top:12px;color:var(--mut);max-width:62ch}
+details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 
 /* ===== FOOTER ============================================================ */
 .foot{position:relative;border-top:1px solid var(--line);background:var(--card);overflow:hidden}
@@ -406,26 +417,68 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
 .foot .grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(28px,5vw,64px);align-items:center}
 .foot h2{font-size:clamp(32px,4.6vw,58px);max-width:14ch;margin-top:14px}
 .foot .cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
-.links{margin-top:44px;padding-top:22px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;
-  gap:10px 26px;font-size:14px;color:var(--mut)}
+.links{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);display:flex;
+  flex-wrap:wrap;align-items:center;gap:0 22px;font-size:14px;color:var(--mut)}
+.links a,.links span{display:inline-flex;align-items:center;min-height:44px}
 .links a{text-decoration:none;transition:color .2s var(--ease)}
 .links a:hover{color:var(--ink)}
 
 @media (max-width:980px){
-  .flowgrid{grid-template-columns:minmax(0,1fr);gap:0}
-  .stage{display:none}
-  .step{min-height:0;opacity:1;filter:none;padding-block:34px;border-bottom:1px solid var(--line)}
-  .step:last-child{border-bottom:0}
-  .step .phone{display:block}
-  .step .n i{max-width:64px}
+  /* Same idea as desktop — one phone that stays put while the beats scroll by.
+     It pins to the top instead of the side, and the per-step phones are dropped
+     so the section is ~3 screens rather than the 5.6 that stacking cost. */
+  /* flat ground here: the stage paints a solid panel so text can slide behind
+     it, and over the section's radial gradient that panel showed as a rectangle */
+  .flow{background:var(--bg)}
+  .flow .head{padding-block:clamp(44px,6vw,72px) 0}
+  .flowgrid{display:block;padding-block:0 clamp(32px,5vw,56px)}
+  .stage{position:sticky;top:var(--hdr);z-index:3;display:grid;justify-items:center;
+    background:var(--bg);margin-inline:calc(var(--gut) * -1);padding:16px var(--gut) 12px;
+    transition:box-shadow .35s var(--ease)}
+  /* the divider only belongs there once it's actually parked over the text —
+     unpinned it made the phone look like a boxed-in widget */
+  .stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+    background:var(--line);opacity:0;transition:opacity .35s var(--ease)}
+  .stage.pinned::after{opacity:1}
+  .stage.pinned{box-shadow:0 18px 30px -22px rgba(0,0,0,.95)}
+  .stage .phone{height:min(368px,calc(50svh - var(--hdr)));width:auto;max-width:none}
+  .stageprog{margin-top:14px;width:min(190px,58%)}
+  .steps{display:block}
+  /* natural height, not a tall viewport block: the text has to fit in the band
+     below the pinned phone, and 54vh steps were taller than that band */
+  .step{min-height:0;padding-block:26px;justify-content:flex-start;
+    opacity:.2;filter:blur(1.4px)}
+  .step.on{opacity:1;filter:none}
+  .step:first-child{padding-top:22px}
+  .step h3{margin-top:10px;font-size:clamp(25px,6.4vw,31px);max-width:none}
+  .step p{margin-top:10px;font-size:16px;max-width:none}
+  .step .phone{display:none}
   .foot .grid{grid-template-columns:minmax(0,1fr)}
-  .slam--lg{justify-self:start}
+  /* centred, not start-aligned: the ripple grows to 1.55x and overran the
+     gutter, where .foot's overflow:hidden sliced it */
+  .slam--lg{justify-self:center;margin-top:8px}
 }
 @media (max-width:860px){
   .hero .grid{grid-template-columns:minmax(0,1fr)}
   .facts .wrap{grid-template-columns:minmax(0,1fr);gap:22px}
-  .pair{grid-template-columns:minmax(0,1fr);gap:40px}
+  .pair{grid-template-columns:minmax(0,1fr);gap:36px}
+  .pair figure .phone{max-width:262px}
   .spot{display:none}
+}
+@media (max-width:560px){
+  .eyebrow{font-size:12px}
+  /* touch targets: 44px minimum */
+  .pill{height:44px}
+  .railwrap{height:40px}
+  .rail{height:40px}
+  .rail::-webkit-slider-runnable-track{height:40px}
+  .rail::-webkit-slider-thumb{margin-top:7px}
+  .rail::-moz-range-track{height:40px}
+  .g span{font-size:12px}
+  .goals .foot{margin-top:20px;font-size:15px}
+  .hero{padding-block:32px 34px}
+  /* two full-width stacked CTAs rather than a ragged wrap */
+  .hero .cta .btn,.foot .cta .btn{flex:1 1 100%}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -488,7 +541,10 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
 
           <p class="eyebrow blabel">How much is on it?</p>
           <div class="amt"><span>&#8377;</span><input id="amt" class="num" type="number" min="20" max="5000" step="10" value="500" aria-label="Stake amount in rupees"></div>
-          <input id="rail" class="rail" type="range" min="20" max="5000" step="10" value="500" aria-label="Stake amount slider">
+          <div class="railwrap">
+            <span class="railtrack"><i id="railfill"></i></span>
+            <input id="rail" class="rail" type="range" min="20" max="5000" step="10" value="500" aria-label="Stake amount slider">
+          </div>
 
           <p class="eyebrow blabel">Who gets it if you don't?</p>
           <div class="pills" id="ngos" role="group" aria-label="Charity"></div>
@@ -901,8 +957,8 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
            '<span class="v">₹' + s[1] + '</span>' +
            '<span class="w">' + s[2] + '</span></span>';
   }
-  var pillsHtml = STAKES.map(pill).join('');
-  mrow.innerHTML = pillsHtml + pillsHtml; /* duplicated so translateX(-50%) loops seamlessly */
+  var pills = STAKES.map(pill).join('');
+  mrow.innerHTML = pills + pills; /* duplicated so translateX(-50%) loops seamlessly */
 
   /* ===== 5. goals grid ================================================== */
   var GOALS_GRID = [
@@ -938,7 +994,11 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
   /* Nearest-to-viewport-centre, NOT a thin IntersectionObserver band — the
      band fired as soon as the next step's top edge crossed it, which switched
      the phone while the previous step's text was still the one being read. */
-  var steps = [].slice.call(document.querySelectorAll('#steps .step')),
+  /* mirrors the CSS breakpoint where the stage flips from a side column to a
+     panel pinned at the top — keep the two numbers in step */
+  var mqStacked = window.matchMedia('(max-width: 980px)');
+  var stageEl = document.querySelector('.stage'),
+      steps = [].slice.call(document.querySelectorAll('#steps .step')),
       shots = [].slice.call(document.querySelectorAll('#stack img')),
       segs  = [].slice.call(document.querySelectorAll('#stageprog i')),
       curStep = -1, stepTick = false;
@@ -946,11 +1006,35 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
   function syncFlow() {
     stepTick = false;
     if (!steps.length) return;
-    var mid = window.innerHeight / 2, best = 0, bestD = Infinity;
-    for (var i = 0; i < steps.length; i++) {
-      var r = steps[i].getBoundingClientRect();
-      var d = Math.abs(r.top + r.height / 2 - mid);
-      if (d < bestD) { bestD = d; best = i; }
+    /* Desktop: the phone is beside the text, so aim at the viewport centre.
+       Mobile: the phone is pinned to the top, so aim at the middle of what's
+       left below it — otherwise the focus line sits inside the phone. */
+    var vh = window.innerHeight, sr = stageEl.getBoundingClientRect();
+    /* pinned = the phone is parked in the top band (mobile). On desktop the
+       stage is a tall column beside the text, so its bottom sits well past
+       0.62vh and this stays false. */
+    var pinned = mqStacked.matches &&
+                 sr.bottom > 0 && sr.bottom < vh * 0.62 && sr.top < vh * 0.25;
+    stageEl.classList.toggle('pinned', pinned);
+    var best = 0, i, r;
+
+    if (pinned) {
+      /* The readable band is only what's left under the phone, so pick the
+         topmost heading still inside it. The active heading then always sits
+         just below the phone instead of scrolling behind it. */
+      var line = sr.bottom + 16;
+      best = steps.length - 1;
+      for (i = 0; i < steps.length; i++) {
+        var h = steps[i].querySelector('h3');
+        if ((h ? h.getBoundingClientRect().top : steps[i].getBoundingClientRect().top) >= line) { best = i; break; }
+      }
+    } else {
+      var mid = vh / 2, bestD = Infinity;
+      for (i = 0; i < steps.length; i++) {
+        r = steps[i].getBoundingClientRect();
+        var d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < bestD) { bestD = d; best = i; }
+      }
     }
     if (best === curStep) return;
     curStep = best;
@@ -977,7 +1061,7 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
   var NGOS = ['Goonj', 'Akshaya Patra', 'Smile Foundation', 'Wildlife SOS'];
   var state = { goal: BUILD[0][0], when: BUILD[0][2], ngo: NGOS[0] };
 
-  function pills(host, list, onPick) {
+  function pillGroup(host, list, onPick) {
     list.forEach(function (v, i) {
       var label = Array.isArray(v) ? v[0] : v, icon = Array.isArray(v) ? svg(v[1], 17) : '';
       var b = document.createElement('button');
@@ -996,7 +1080,8 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
 
   var amt = document.getElementById('amt'), rail = document.getElementById('rail'),
       okAmt = document.getElementById('okAmt'), ngoAmt = document.getElementById('ngoAmt'),
-      feeAmt = document.getElementById('feeAmt'), ngoNm = document.getElementById('ngoName');
+      feeAmt = document.getElementById('feeAmt'), ngoNm = document.getElementById('ngoName'),
+      railFill = document.getElementById('railfill');
 
   function rupee(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
   function pop(el) { if (calm) return; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
@@ -1019,8 +1104,7 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
     else { okAmt.textContent = rupee(v); ngoAmt.textContent = rupee(give); }
     shown.ok = v; shown.ngo = give;
     feeAmt.textContent = rupee(fee);
-    var pct = (v - 20) / (5000 - 20) * 100;
-    rail.style.background = 'linear-gradient(90deg, var(--lime) ' + pct + '%, var(--line) ' + pct + '%)';
+    railFill.style.width = ((v - 20) / (5000 - 20) * 100) + '%';
   }
   amt.addEventListener('input', function () { rail.value = amt.value; paint(false); });
   amt.addEventListener('change', function () {
@@ -1029,8 +1113,8 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
   });
   rail.addEventListener('input', function () { amt.value = rail.value; paint(false); });
 
-  pills(document.getElementById('goals'), BUILD, function (v) { state.goal = v[0]; state.when = v[2]; });
-  pills(document.getElementById('ngos'),  NGOS,  function (v) { state.ngo = v; ngoNm.textContent = v; pop(ngoAmt); });
+  pillGroup(document.getElementById('goals'), BUILD, function (v) { state.goal = v[0]; state.when = v[2]; });
+  pillGroup(document.getElementById('ngos'),  NGOS,  function (v) { state.ngo = v; ngoNm.textContent = v; pop(ngoAmt); });
   paint(false);
 
   var bface = document.getElementById('bface'),
@@ -1171,34 +1255,48 @@ details p{margin-top:12px;color:var(--mut);max-width:62ch}
       w = r.width; h = r.height;
       cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var want = Math.max(18, Math.min(52, Math.round(w / 26)));
+      var want = Math.max(40, Math.min(130, Math.round(w / 11)));
       dots = [];
       for (var i = 0; i < want; i++) {
+        var big = Math.random() < .22;
         dots.push({
           x: Math.random() * w, y: Math.random() * h,
-          r: .7 + Math.random() * 1.7,
-          vx: (Math.random() - .5) * .16, vy: -.06 - Math.random() * .16,
-          a: .06 + Math.random() * .2
+          r: big ? 2.2 + Math.random() * 1.9 : .8 + Math.random() * 1.5,
+          vx: (Math.random() - .5) * .2,
+          vy: -.08 - Math.random() * .22,
+          a: big ? .30 + Math.random() * .26 : .12 + Math.random() * .24,
+          sway: .18 + Math.random() * .5,
+          seed: Math.random() * 6283,
+          pale: Math.random() < .22   /* a few off-white ones for depth */
         });
       }
     }
 
-    function frame() {
+    function frame(t) {
       ctx.clearRect(0, 0, w, h);
       for (var i = 0; i < dots.length; i++) {
         var d = dots[i];
-        d.x += d.vx; d.y += d.vy;
-        /* gentle push away from the cursor */
+        d.x += d.vx + Math.sin((t + d.seed) * .0006) * d.sway * .35;
+        d.y += d.vy;
+        /* push away from the cursor */
         var dx = d.x - px, dy = d.y - py, dist2 = dx * dx + dy * dy;
-        if (dist2 < 16900) {
-          var f = (1 - Math.sqrt(dist2) / 130) * .9;
-          d.x += dx * f * .05; d.y += dy * f * .05;
+        if (dist2 < 28900) {
+          var f = (1 - Math.sqrt(dist2) / 170) * 1.1;
+          d.x += dx * f * .06; d.y += dy * f * .06;
         }
-        if (d.y < -8) { d.y = h + 8; d.x = Math.random() * w; }
-        if (d.x < -8) d.x = w + 8; else if (d.x > w + 8) d.x = -8;
+        if (d.y < -10) { d.y = h + 10; d.x = Math.random() * w; }
+        if (d.x < -10) d.x = w + 10; else if (d.x > w + 10) d.x = -10;
+
+        var rgb = d.pale ? '245,245,247' : '198,255,61';
+        if (d.r > 2) {               /* halo instead of shadowBlur — far cheaper */
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r * 2.6, 0, 6.2832);
+          ctx.fillStyle = 'rgba(' + rgb + ',' + (d.a * .16) + ')';
+          ctx.fill();
+        }
         ctx.beginPath();
         ctx.arc(d.x, d.y, d.r, 0, 6.2832);
-        ctx.fillStyle = 'rgba(198,255,61,' + d.a + ')';
+        ctx.fillStyle = 'rgba(' + rgb + ',' + d.a + ')';
         ctx.fill();
       }
       raf = running ? requestAnimationFrame(frame) : null;
