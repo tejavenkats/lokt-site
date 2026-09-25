@@ -3,20 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0A0A0C">
 <title>Page not found — Lokt</title>
 <meta name="description" content="This page doesn't exist. Head back to the Lokt home page.">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
 
-<header class="site-header dark">
+<header class="site-header">
   <div class="wrap">
-    <a href="/" class="logo" aria-label="Lokt home"><img src="/assets/lokt-wordmark-white.png" alt="Lokt"></a>
+    <a href="/" class="logo" aria-label="Lokt home"><img class="logo-img" src="/assets/lokt-wordmark-white.png" alt="Lokt"></a>
     <nav aria-label="Primary">
       <a href="/contact/">Contact</a>
     </nav>
@@ -25,12 +23,12 @@
 
 <main class="not-found">
   <div class="wrap-narrow">
-    <p class="eyebrow" style="color:var(--lime);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;">404</p>
-    <h1>This page isn't locked in.</h1>
-    <p>We couldn't find what you were looking for. It may have moved, or the link might be off.</p>
-    <div class="cta-row" style="justify-content:center;">
-      <a href="/" class="btn btn-lime">Back to home</a>
-      <a href="/contact/" class="btn btn-outline">Contact us</a>
+    <p class="eyebrow">404</p>
+    <h1 class="title">This page isn't locked in.</h1>
+    <p class="lead" style="max-width:none;">We couldn't find what you were looking for. It may have moved, or the link might be off.</p>
+    <div class="cta-row">
+      <a href="/" class="btn btn-primary">Back to home</a>
+      <a href="/contact/" class="btn btn-secondary">Contact us</a>
     </div>
   </div>
 </main>

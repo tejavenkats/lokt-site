@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0A0A0C">
 <title>Lokt — Lock in your goals with your own money</title>
 <meta name="description" content="Lokt is a mobile app where you put your own money behind a personal goal. Hit it, get every rupee back. Miss it, and 90% goes to a charity you chose. Coming soon to Android & iOS.">
 <link rel="canonical" href="https://lokt.in/">
@@ -14,16 +15,13 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
 
-<header class="site-header dark">
+<header class="site-header">
   <div class="wrap">
-    <a href="/" class="logo" aria-label="Lokt home"><img src="/assets/lokt-wordmark-white.png" alt="Lokt"></a>
+    <a href="/" class="logo" aria-label="Lokt home"><img class="logo-img" src="/assets/lokt-wordmark-white.png" alt="Lokt"></a>
     <nav aria-label="Primary">
       <a href="/contact/">Contact</a>
     </nav>
@@ -34,39 +32,114 @@
 
   <section class="hero">
     <div class="wrap">
-      <p class="eyebrow">Coming soon to Android &amp; iOS</p>
-      <h1>Lock in. <span class="lime">Or lose it.</span></h1>
-      <p class="sub">Lokt is where you put your own money behind a goal you set yourself. Hit it, and you get every rupee back. Miss it, and 90% of your stake goes to a charity you picked.</p>
-      <div class="cta-row">
-        <a href="#coming-soon" class="btn btn-lime">Get notified</a>
-        <a href="/contact/" class="btn btn-outline">Contact us</a>
+      <div class="hero-copy">
+        <p class="eyebrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C6FF3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Coming soon · Android &amp; iOS
+        </p>
+        <h1 class="hero-title">Put money on your word.</h1>
+        <p class="lead">Lokt is a mobile app for keeping promises to yourself. Pick a goal, back it with ₹20 to ₹5,000 of your own money, and prove it inside a short window. Do it — or cancel before the cutoff — and every rupee comes home.</p>
+        <div class="cta-row">
+          <a href="/contact/" class="btn btn-primary">Get in touch</a>
+          <a href="#deal" class="btn btn-secondary">See the deal</a>
+        </div>
+
+        <ul class="proof-list">
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C6FF3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>₹20 to ₹5,000 a stake. You set it.</span>
+          </li>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C6FF3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+            <span>Prove it in the window, get it all back.</span>
+          </li>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C6FF3D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+            <span>Miss it and most of it goes to the charity you chose — Lokt keeps a small fee to run the service.</span>
+          </li>
+        </ul>
       </div>
+
+      <div class="hero-mark" aria-hidden="true">
+        <div class="lock-glow"></div>
+        <div class="lock-mark">
+          <svg width="120" height="120" viewBox="0 0 48 48" fill="none">
+            <path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"></path>
+            <rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#F5F5F7"></rect>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="deal">
+    <div class="wrap-narrow">
+      <h2 class="title">The deal, in plain words</h2>
+      <div class="card deal-card">
+        <div class="deal-row">
+          <span class="num accent">01</span>
+          <p>You put your own money behind a goal you set — ₹20 to ₹5,000. It's locked until your window closes.</p>
+        </div>
+        <div class="deal-row">
+          <span class="num accent">02</span>
+          <p>Prove it in time and <span class="hl-success">every rupee comes back</span>. Lokt takes nothing.</p>
+        </div>
+        <div class="deal-row">
+          <span class="num accent">03</span>
+          <p>Cancel before the window opens and you get a <strong>full refund</strong>, no questions.</p>
+        </div>
+        <div class="deal-row">
+          <span class="num danger">04</span>
+          <p>Miss it and <span class="hl-danger">90% goes to the charity you picked</span>. Lokt keeps 10% to run the service.</p>
+        </div>
+        <div class="deal-row">
+          <span class="num muted">05</span>
+          <p>There's no opponent on the other side. The most you can ever receive is your own money, returned.</p>
+        </div>
+        <div class="deal-row">
+          <span class="num muted">06</span>
+          <p>A real person reviews your proof. If we get it wrong, email us and we'll fix it.</p>
+        </div>
+      </div>
+      <p class="deal-note">This is the whole mechanism. For the legal version, read the <a href="/terms/">Terms</a> and <a href="/privacy/">Privacy Policy</a>.</p>
     </div>
   </section>
 
   <section class="how" id="how">
     <div class="wrap">
-      <h2>How it works</h2>
+      <h2 class="title">How it works</h2>
       <ol class="steps">
         <li>
-          <span class="num">1</span>
+          <div class="step-top">
+            <span class="num">1</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
           <h3>Pick a goal</h3>
-          <p>Choose a template — "Wake up," "Go to the gym," "Cook a meal" — or write your own custom goal.</p>
+          <p>Choose a template — wake up, hit the gym, cook a meal — or write your own.</p>
         </li>
         <li>
-          <span class="num">2</span>
+          <div class="step-top">
+            <span class="num">2</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+          </div>
           <h3>Set your stake</h3>
           <p>Set a deadline and choose an amount, anywhere from ₹20 to ₹5,000.</p>
         </li>
         <li>
-          <span class="num">3</span>
+          <div class="step-top">
+            <span class="num">3</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+          </div>
           <h3>Choose a charity</h3>
-          <p>Pick a charity from our partner list. Miss your goal and 90% of your stake goes to them; Lokt keeps 10% to run the service.</p>
+          <p>Pick a charity from our partner list. It's who receives your stake if you miss.</p>
         </li>
         <li>
-          <span class="num">4</span>
+          <div class="step-top">
+            <span class="num">4</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg>
+          </div>
           <h3>Pay and lock in</h3>
-          <p>Pay securely with Razorpay. Prove your goal in the window around your deadline, and get your stake back.</p>
+          <p>Pay securely with Razorpay. Prove your goal in the window, and get your stake back.</p>
         </li>
       </ol>
     </div>
@@ -74,49 +147,46 @@
 
   <section class="why">
     <div class="wrap-narrow">
-      <h2>This isn't a bet.</h2>
-      <p>There's no one on the other side of a Lokt stake. No odds, no opponent, no payout bigger than what you put in. The most you can ever get back is your own money — and if you miss, the bulk of it goes to a charity you chose before you started, while Lokt keeps a 10% service fee. Lokt is a commitment device: a way to make a promise to yourself cost something, so you actually keep it.</p>
+      <h2 class="title">There's no one on the other side.</h2>
+      <p class="lead" style="max-width:none;">There's no one on the other side of a Lokt stake. No opponent, no payout bigger than what you put in. The most you can ever get back is your own money — miss your goal and most of your stake goes to the charity you chose before you started; Lokt keeps a small fee to run the service. Lokt is a self-commitment service: a way to make a promise to yourself cost something, so you actually keep it.</p>
     </div>
   </section>
 
   <section class="pricing" id="pricing">
     <div class="wrap">
-      <h2>Pricing</h2>
-      <p class="lead">You pay your stake. Nothing on top.</p>
-
-      <div class="pricing-grid">
-        <div class="price-card">
-          <h3>What you pay</h3>
-          <p class="big">Your stake</p>
-          <p>No booking fee, no add-on at checkout. The amount you choose is the amount you're charged.</p>
+      <h2 class="title">What it costs</h2>
+      <div class="card stat-strip">
+        <div class="stat">
+          <div class="stat-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#84848E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span class="eyebrow" style="margin:0;">What you pay</span>
+          </div>
+          <div class="stat-value">Your stake</div>
+          <div class="stat-sub">No add-on at checkout.</div>
         </div>
-        <div class="price-card">
-          <h3>Stake range</h3>
-          <p class="big">₹20 – ₹5,000</p>
-          <p>You choose how much you're putting behind your goal, anywhere in this range.</p>
+        <div class="stat">
+          <div class="stat-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#84848E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+            <span class="eyebrow" style="margin:0;">Stake range</span>
+          </div>
+          <div class="stat-value">₹20 – ₹5,000</div>
+          <div class="stat-sub">You choose, every time.</div>
         </div>
-        <div class="price-card">
-          <h3>If you miss</h3>
-          <p class="big">10% to us</p>
-          <p>We keep 10% of a forfeited stake to run proof checks, payments and the app. The other 90% goes to the charity you chose.</p>
+        <div class="stat">
+          <div class="stat-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#84848E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+            <span class="eyebrow" style="margin:0;">Full control</span>
+          </div>
+          <div class="stat-value">Cancel anytime</div>
+          <div class="stat-sub">Full refund before your window opens.</div>
         </div>
-      </div>
-
-      <div class="worked-example">
-        <h3>A worked example</h3>
-        <p>You stake ₹500 on "Go to the gym." At checkout, you're charged ₹500 — that's it.</p>
-        <ul>
-          <li><strong>You do it:</strong> your proof is approved and the full ₹500 comes back. Net cost: ₹0.</li>
-          <li><strong>You cancel in time:</strong> full ₹500 back as well.</li>
-          <li><strong>You don't:</strong> ₹450 goes to the charity you chose and Lokt keeps ₹50 to run the service.</li>
-        </ul>
       </div>
     </div>
   </section>
 
   <section class="faq" id="faq">
     <div class="wrap-narrow">
-      <h2>Frequently asked questions</h2>
+      <h2 class="title">Frequently asked questions</h2>
 
       <details>
         <summary>What counts as proof?</summary>
@@ -157,8 +227,17 @@
 
   <section class="coming-soon-band" id="coming-soon">
     <div class="wrap-narrow">
-      <h2>Coming soon to Android &amp; iOS</h2>
-      <p>Lokt is currently in the works. Got a question in the meantime? <a href="/contact/">Get in touch</a>.</p>
+      <div class="card contact-band">
+        <svg class="lock-mini" width="44" height="44" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"></path>
+          <rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#F5F5F7"></rect>
+        </svg>
+        <div class="band-copy">
+          <h2>Coming soon to Android &amp; iOS</h2>
+          <p>Lokt is currently in the works. Got a question in the meantime? Email us.</p>
+        </div>
+        <a href="/contact/" class="btn btn-primary">Contact us</a>
+      </div>
     </div>
   </section>
 
