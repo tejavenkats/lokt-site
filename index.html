@@ -479,6 +479,10 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
   .hero{padding-block:32px 34px}
   /* two full-width stacked CTAs rather than a ragged wrap */
   .hero .cta .btn,.foot .cta .btn{flex:1 1 100%}
+  /* one fact per line. Wrapping three of these into a flex row at phone width put
+     "Free to cancel before the window" flush against the right gutter with no space
+     left, and orphaned the third onto its own line anyway. */
+  .pledge{flex-direction:column;gap:10px;margin-top:26px;padding-top:18px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
