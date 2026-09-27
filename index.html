@@ -33,6 +33,8 @@
   --body:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --gut:clamp(20px,5vw,64px);
   --hdr:73px;   /* sticky header height: 13+46+13 + 1px border */
+  --csup:40px;  /* flow card support row */
+  --cft:34px;   /* flow card footer row; panel = 156px + csup + cft */
   --ease:cubic-bezier(.4,0,.2,1);
   --spring:cubic-bezier(.2,1.3,.4,1);
 }
@@ -98,7 +100,7 @@ p{margin:0}
   box-shadow:0 50px 90px -34px rgba(0,0,0,.95), inset 0 0 0 1px rgba(245,245,247,.04)}
 .phone>img{width:100%;height:auto;aspect-ratio:390/844;object-fit:cover;border-radius:9.5% / 4.4%;display:block;background:var(--bg)}
 .phone::after{content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);
-  width:26.7%;height:2.4%;border-radius:0 0 3.3% 3.3%;background:#08080A;pointer-events:none}
+  width:104px;height:20px;border-radius:0 0 13px 13px;background:#08080A;pointer-events:none}
 
 /* ===== AMBIENT FIELD (blobs + motes + cursor spotlight) ================== */
 .field{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
@@ -240,41 +242,176 @@ p{margin:0}
 .pill .sep{color:var(--line2)}
 .pill .w{font-size:13px;font-weight:600;color:var(--mut)}
 
-/* ===== FLOW (sticky slides) ============================================== */
-.flow{border-top:1px solid var(--line);
-  background:radial-gradient(100% 60% at 80% 0%, rgba(198,255,61,.05), transparent 60%), var(--bg)}
-.flow .head{padding-block:clamp(52px,7vw,88px) 0}
-.flow .head h2{font-size:clamp(32px,4.4vw,54px);margin-top:14px;max-width:18ch}
-.flowgrid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);
-  gap:clamp(32px,6vw,90px);align-items:start;padding-block:clamp(32px,5vw,56px) clamp(48px,7vw,88px)}
-.stage{position:sticky;top:104px;display:grid;justify-items:center}
-.stage .phone{width:auto;max-width:none}
-.stage .stack{height:min(660px,calc(100svh - 200px));width:auto}
-.stack{position:relative;width:100%;aspect-ratio:390/844}
-.stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:9.5% / 4.4%;
-  opacity:0;transform:scale(1.03) translateY(8px);background:var(--bg);
-  transition:opacity .55s var(--ease),transform .65s var(--ease)}
-.stack img.on{opacity:1;transform:none}
-.stageprog{display:flex;gap:6px;margin-top:20px;width:min(240px,100%)}
-.stageprog i{flex:1;height:4px;border-radius:999px;background:var(--line);
-  transition:background .45s var(--ease),transform .45s var(--spring);transform-origin:0 50%}
-.stageprog i.on{background:var(--lime)}
-.stageprog i.now{transform:scaleY(1.9)}
-.steps{display:grid}
-.step{min-height:78vh;display:flex;flex-direction:column;justify-content:center;padding-block:24px;
-  opacity:.34;filter:blur(.7px);transition:opacity .45s var(--ease),filter .45s var(--ease)}
+/* ===== FLOW =============================================================
+   ONE layout at every width: a centred column, the heading and a fixed panel
+   pinned at the top, the beats scrolling beneath on a spine. No two-column
+   variant — that's what left half the desktop empty.
+
+   The panel is 320px at every width and every card uses the SAME four rows:
+   eyebrow / one big line / supporting block / footer strip. So the eyebrow,
+   the hero and the footer land on identical y positions on all five steps.
+
+   Card text colours are .pos/.neg/.ink — NOT .g/.r/.w. `.g` is the goal-tile
+   class in the next section and it was styling every ₹500 as a bordered tile.
+========================================================================== */
+.flow{position:relative;border-top:1px solid var(--line);background:var(--bg)}
+/* One viewport-tall sticky layer instead of painting on the section box: a
+   section-anchored background fades out partway down and dies by step 3. */
+.flowbg{position:sticky;top:0;height:100svh;margin-bottom:-100svh;z-index:0;
+  pointer-events:none;overflow:hidden}
+.flowbg i{position:absolute;inset:0;display:block}
+
+/* NEUTRAL SURFACE, ONE ACCENT. Everything here is white or black at low alpha.
+   Lime at low alpha over near-black mixes to olive, so a lime wash across the
+   whole viewport reads as cheap sludge no matter how it is tuned — and it breaks
+   the brand rule anyway (lime is a highlighter, one element per screen). The only
+   lime in this section is the timeline spine, which glows because it is the thing
+   the eye is meant to follow. Don't add colour fields here. */
+.fgrid{background-image:
+    linear-gradient(rgba(245,245,247,.062) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,245,247,.062) 1px, transparent 1px);
+  background-size:76px 76px;background-position:center;
+  -webkit-mask-image:radial-gradient(106% 96% at 50% 44%, #000 34%, transparent 100%);
+  mask-image:radial-gradient(106% 96% at 50% 44%, #000 34%, transparent 100%)}
+
+/* Light pool + vignette in ONE element, both centred at 50%, so the two halves
+   cannot come apart. An earlier version used positioned blobs and one of them
+   resolved off-screen twice — the "spot on the right and not on the left" bug. */
+.fhalo{background:
+    radial-gradient(52% 40% at 50% 36%, rgba(203,219,242,.17), transparent 70%),
+    radial-gradient(26% 20% at 50% 46%, rgba(198,255,61,.07), transparent 74%),
+    radial-gradient(104% 88% at 50% 46%, transparent 50%, rgba(10,10,12,.72) 100%);
+  animation:fbreathe 24s ease-in-out infinite;will-change:transform}
+@keyframes fbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+
+/* Fine grain. Large flat gradients band badly on dark OLED panels; a few percent
+   of noise removes the stepping and is most of why a dark page reads expensive. */
+.fnoise{opacity:.038;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px 180px}
+@media (max-width:620px){
+  .fgrid{background-size:52px 52px}
+  .fhalo{background:
+    radial-gradient(70% 30% at 50% 38%, rgba(203,219,242,.15), transparent 72%),
+    radial-gradient(40% 15% at 50% 46%, rgba(198,255,61,.065), transparent 76%),
+    radial-gradient(100% 82% at 50% 46%, transparent 44%, rgba(10,10,12,.74) 100%)}
+}
+.flow .wrap{position:relative;z-index:1}
+.flowgrid{max-width:720px;margin-inline:auto;padding-block:0 clamp(40px,6vw,72px)}
+
+.stage{position:sticky;top:var(--hdr);z-index:3;display:grid;justify-items:center;gap:16px;
+  isolation:isolate;
+  /* full-bleed: with a column-width panel it painted a visible rectangle over
+     the section's texture, with two hard vertical edges */
+  margin-inline:calc(50% - 50vw);padding:18px max(var(--gut),calc(50vw - 310px)) 38px}
+/* The scrim is a PSEUDO, not the stage's own background, and it is a radial, not a
+   flat tint. Two reasons: backdrop-filter over a sharp dot grid drew a hard seam
+   right across the page at the stage's bottom edge, and a full-width flat tint
+   blacked out the section's glow behind the card. This is opaque down the middle
+   where the copy sits, open at the far sides so the ambience reads through, and
+   masked to nothing at the bottom so steps dissolve under it instead of clipping. */
+.stage::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(62% 130% at 50% 30%,
+    rgba(10,10,12,.97) 0%, rgba(10,10,12,.90) 50%, rgba(10,10,12,.26) 100%);
+  -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 72%,transparent 100%)}
+.shead{width:100%;max-width:620px}
+.shead h2{font-size:clamp(22px,3.4vw,32px);max-width:none}
+
+/* scales gently with viewport height so short laptops keep a readable band
+   below it; the ratio is what stays constant, not the pixel count */
+.panel{position:relative;width:100%;max-width:620px;height:calc(156px + var(--csup) + var(--cft));
+  background:rgba(22,22,27,.88);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:24px;overflow:hidden;
+  /* real elevation: a 1px lit top edge plus a cast shadow. Flat on a lit ground
+     the panel read as a grey rectangle rather than an object sitting in the light. */
+  box-shadow:inset 0 1px 0 rgba(245,245,247,.07), 0 30px 60px -34px rgba(0,0,0,.95)}
+.pprog{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;gap:2px}
+.pprog i{flex:1;height:3px;background:var(--line);transition:background .45s var(--ease)}
+.pprog i.on{background:var(--lime)}
+
+.ui{position:absolute;inset:0;margin:0;padding:22px 22px 18px;
+  display:grid;grid-template-rows:16px 64px var(--csup) var(--cft);gap:12px 0;
+  opacity:0;transform:translateY(10px);pointer-events:none;
+  transition:opacity .4s var(--ease),transform .45s var(--ease)}
+.ui.on{opacity:1;transform:none;pointer-events:auto}
+/* line-height pinned to the row height, or the eyebrow overflows 16px and
+   shifts every row below it by a few px per card */
+.ui .ceb{font-size:12px;line-height:16px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--mut);margin:0}
+/* block, not flex: flex-end dropped "in a row" to the bottom of the 78px row,
+   which read as a second line. Inline keeps it on the number's baseline. */
+/* bottom-aligned so a one-line and a two-line hero share a last baseline */
+.ui .cbig{display:block;align-self:end;min-width:0;font-family:var(--disp);
+  font-size:clamp(46px,5.4vw,58px);letter-spacing:-.045em;line-height:1;margin:0}
+.ui .cbig.ctxt{font-size:clamp(28px,3.4vw,34px);letter-spacing:-.035em;line-height:1.1}
+.ui .cbig em{font-family:var(--body);font-style:normal;font-size:.34em;font-weight:700;
+  letter-spacing:0;color:var(--mut);margin-left:.34em}
+.ui .csup{align-self:start;margin:0}
+/* --cft is the footer row height: fixed so the rule never moves, and sized to
+   the wrapped (mobile) case. The panel height is derived from it. */
+.ui .cft{align-self:stretch;align-content:start;display:flex;flex-wrap:wrap;gap:3px 18px;
+  padding-top:12px;border-top:1px solid var(--line);font-size:14px;font-weight:600;
+  color:var(--mut);margin:0}
+.ui .cft span{white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.ui .cpos{color:var(--grn)} .ui .cneg{color:var(--red)} .ui .cink{color:var(--ink);font-weight:700}
+.ui .csay{font-size:16px;line-height:1.38;color:var(--mut);margin:0}
+.ui .cchips{display:flex;flex-wrap:wrap;gap:8px}
+.ui .cchip{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);
+  display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--mut)}
+.ui .cchip.sel{border-color:var(--lime);color:var(--lime);background:rgba(198,255,61,.1)}
+.ui .cbar{height:4px;border-radius:999px;background:rgba(255,92,108,.24);overflow:hidden}
+.ui .cbar i{display:block;height:4px;border-radius:999px;background:var(--red);width:62%}
+.ui .clocks{display:flex;flex-wrap:wrap;gap:7px}
+
+/* padding-top so step 01 sits in the readable band as the section arrives —
+   too little and the first beat is already scrolled past before it activates */
+.steps{--spad:clamp(84px,15vh,170px);position:relative;padding-left:40px;padding-top:var(--spad)}
+/* The spine starts at the FIRST BEAT, not at the top of the column. An absolute
+   child ignores the padding box, so top:0 hung a length of spine above step 01 —
+   it showed up beside the section heading, which is nothing to do with the
+   timeline. --spad is shared with the padding for exactly this reason. */
+.spine{position:absolute;left:12px;top:var(--spad);bottom:0;width:2px;border-radius:2px;
+  background:var(--line);
+  /* --sclip is set on every scroll tick: the height of the spine currently behind
+     the pinned panel. See the note in the flow sync. 0 with JS off, which is fine. */
+  -webkit-mask-image:linear-gradient(180deg, transparent var(--sclip,0px),
+    #000 calc(var(--sclip,0px) + 52px));
+  mask-image:linear-gradient(180deg, transparent var(--sclip,0px),
+    #000 calc(var(--sclip,0px) + 52px))}
+.spine i{position:relative;display:block;width:2px;height:0;border-radius:2px;
+  background:linear-gradient(180deg, rgba(198,255,61,.22), var(--lime) 58%);
+  transition:height .45s var(--ease)}
+/* The glow travels with the growing tip rather than sitting on the whole line.
+   A box-shadow along the full length blooms upward past the sticky card, and the
+   card's scrim is graded (open at the sides), so ~10% of a bright lime line still
+   reads through it beside the heading. A tip bloom is always below the card,
+   which is where the eye is anyway. This is the section's only lime — see .fgrid. */
+.spine i::after{content:"";position:absolute;left:50%;bottom:-6px;translate:-50% 0;
+  width:26px;height:170px;border-radius:999px;pointer-events:none;
+  background:linear-gradient(180deg, rgba(198,255,61,0), rgba(198,255,61,.30));
+  filter:blur(15px)}
+/* each beat needs its own scroll distance: at natural height all five went
+   past in under one screen and were unreadable */
+/* spacing must stay under (readable band − text block) or the active text
+   can't sit fully inside the band below the panel */
+.step{min-height:clamp(210px,38vh,360px);padding-block:18px;opacity:.2;filter:blur(1.4px);
+  transition:opacity .45s var(--ease),filter .45s var(--ease)}
 .step.on{opacity:1;filter:none}
-.step .n{display:flex;align-items:center;gap:12px}
+.step .n{position:relative;display:flex;align-items:center;gap:12px}
+.step .n::before{content:"";position:absolute;left:-34px;top:50%;width:12px;height:12px;
+  margin-top:-6px;border-radius:50%;background:var(--line2);box-shadow:0 0 0 5px var(--bg);
+  transition:background .35s var(--ease),transform .35s var(--spring)}
+.step.on .n::before{background:var(--lime);transform:scale(1.2)}
 .step .n em{font-family:var(--disp);font-size:13px;letter-spacing:.02em;color:var(--lime);font-style:normal}
 .step .n i{flex:1;height:1px;background:var(--line);max-width:0;transition:max-width .7s var(--ease)}
-.step.on .n i{max-width:64px}
+.step.on .n i{max-width:56px}
 .step .n b{font-weight:600;font-size:13px;color:var(--mut);letter-spacing:.02em}
-.step h3{margin-top:16px;font-size:clamp(28px,3.8vw,46px);max-width:15ch}
-.step p{margin-top:14px;color:var(--mut);max-width:44ch;font-size:clamp(16px,1.3vw,18px)}
-.step .phone{display:none;margin:26px auto 0}
+.step h3{margin-top:12px;font-size:clamp(26px,3.6vw,36px);max-width:none}
+.step p{margin-top:12px;color:var(--mut);max-width:46ch;font-size:clamp(16px,1.3vw,17px)}
 @keyframes npop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
-.step.on h3,.step.on p{animation:npop .6s var(--ease) both}
-.step.on p{animation-delay:.09s}
+.step.on h3,.step.on p{animation:npop .55s var(--ease) both}
+.step.on p{animation-delay:.08s}
 
 /* ===== GOALS GRID ======================================================== */
 .goals{border-top:1px solid var(--line)}
@@ -425,36 +562,12 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 .links a:hover{color:var(--ink)}
 
 @media (max-width:980px){
-  /* Same idea as desktop — one phone that stays put while the beats scroll by.
-     It pins to the top instead of the side, and the per-step phones are dropped
-     so the section is ~3 screens rather than the 5.6 that stacking cost. */
-  /* flat ground here: the stage paints a solid panel so text can slide behind
-     it, and over the section's radial gradient that panel showed as a rectangle */
-  .flow{background:var(--bg)}
-  .flow .head{padding-block:clamp(44px,6vw,72px) 0}
-  .flowgrid{display:block;padding-block:0 clamp(32px,5vw,56px)}
-  .stage{position:sticky;top:var(--hdr);z-index:3;display:grid;justify-items:center;
-    background:var(--bg);margin-inline:calc(var(--gut) * -1);padding:12px var(--gut) 10px;
-    transition:box-shadow .35s var(--ease)}
-  /* the divider only belongs there once it's actually parked over the text —
-     unpinned it made the phone look like a boxed-in widget */
-  .stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
-    background:var(--line);opacity:0;transition:opacity .35s var(--ease)}
-  .stage.pinned::after{opacity:1}
-  .stage.pinned{box-shadow:0 18px 30px -22px rgba(0,0,0,.95)}
-  .stage .phone{width:auto;max-width:none}
-  .stage .stack{height:min(320px,calc(42svh - var(--hdr)));width:auto}
-  .stageprog{margin-top:10px;width:min(190px,58%)}
-  .steps{display:block}
-  /* natural height, not a tall viewport block: the text has to fit in the band
-     below the pinned phone, and 54vh steps were taller than that band */
-  .step{min-height:0;padding-block:26px;justify-content:flex-start;
-    opacity:.2;filter:blur(1.4px)}
-  .step.on{opacity:1;filter:none}
-  .step:first-child{padding-top:22px}
-  .step h3{margin-top:10px;font-size:clamp(25px,6.4vw,31px);max-width:none}
-  .step p{margin-top:10px;font-size:16px;max-width:none}
-  .step .phone{display:none}
+  /* Same layout as desktop — centred column, pinned heading + panel, steps on a
+     spine. Only type sizes and paddings tighten. */
+  .flowgrid{padding-block:0 clamp(28px,5vw,48px)}
+  .stage{padding:14px var(--gut) 30px;gap:12px}
+  .shead .eyebrow{display:none}
+  .step{min-height:clamp(200px,34svh,320px);padding-block:16px}
   .foot .grid{grid-template-columns:minmax(0,1fr)}
   /* centred, not start-aligned: the ripple grows to 1.55x and overran the
      gutter, where .foot's overflow:hidden sliced it */
@@ -468,6 +581,20 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
   .spot{display:none}
 }
 @media (max-width:560px){
+  :root{--cft:54px}
+  /* four presets measured 315px inside a 304px card and wrapped to two rows */
+  .ui .cchips{gap:6px}
+  .ui .cchip{padding:0 11px}
+  /* below 400px even three-plus-one won't fit on one row; the presets are
+     illustrative, so the largest drops rather than the row wrapping */
+  @media (max-width:400px){
+    .ui .cchips .cchip:nth-child(4){display:none}
+    .ui .clocks svg{width:22px;height:22px}
+  }
+  /* only the very narrow phones need a taller support row — at 400px it was
+     inflating the panel on every common handset for no reason */
+  /* at 320 the support block and the footer strip each take one more line */
+  @media (max-width:345px){ :root{--csup:70px;--cft:78px} }
   .eyebrow{font-size:12px}
   /* touch targets: 44px minimum */
   .opt{height:44px}
@@ -481,9 +608,8 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
   .hero{padding-block:32px 34px}
   /* two full-width stacked CTAs rather than a ragged wrap */
   .hero .cta .btn,.foot .cta .btn{flex:1 1 100%}
-  /* one fact per line. Wrapping three of these into a flex row at phone width put
-     "Free to cancel before the window" flush against the right gutter with no space
-     left, and orphaned the third onto its own line anyway. */
+  /* one fact per line. Wrapped as a flex row at phone width, "Free to cancel before the
+     window" sat flush against the right gutter and the third orphaned anyway. */
   .pledge{flex-direction:column;gap:10px;margin-top:26px;padding-top:18px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -602,62 +728,98 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 
   <!-- THE FLOW ---------------------------------------------------------- -->
   <section class="flow" id="flow">
-    <div class="wrap head rise">
-      <p class="eyebrow">Start to finish</p>
-      <h2>How one stake actually goes.</h2>
+    <div class="flowbg" aria-hidden="true">
+      <i class="fgrid"></i><i class="fhalo"></i><i class="fnoise"></i>
     </div>
-
     <div class="wrap flowgrid">
+
       <div class="stage">
-        <div class="phone">
-          <div class="stack" id="stack">
-            <img class="on" src="/assets/landing/screens/Create-3-Amount.jpg" alt="Choosing a stake amount in the Lokt app" width="780" height="1688">
-            <img src="/assets/landing/screens/StakeDetail-WindowOpen.jpg" alt="A live stake with the proof window open" width="780" height="1688" loading="lazy">
-            <img src="/assets/landing/screens/Spot-Reveal.jpg" alt="Lokt naming a household item to photograph" width="780" height="1688" loading="lazy">
-            <img src="/assets/landing/screens/StakeDetail-Passed.jpg" alt="A kept stake with the refund on its way" width="780" height="1688" loading="lazy">
-            <img src="/assets/landing/screens/Streak.jpg" alt="A run of kept stakes" width="780" height="1688" loading="lazy">
-          </div>
+        <div class="shead">
+          <p class="eyebrow">Start to finish</p>
+          <h2>How one stake actually goes.</h2>
         </div>
-        <div class="stageprog" id="stageprog" aria-hidden="true">
-          <i class="on now"></i><i></i><i></i><i></i><i></i>
+
+        <div class="panel" id="stack">
+          <div class="pprog" id="stageprog" aria-hidden="true">
+            <i class="on"></i><i></i><i></i><i></i><i></i>
+          </div>
+
+          <figure class="ui on">
+            <p class="ceb">Your stake</p>
+            <p class="cbig num">&#8377;500</p>
+            <div class="csup cchips">
+              <span class="cchip">&#8377;100</span><span class="cchip">&#8377;200</span>
+              <span class="cchip sel">&#8377;500</span><span class="cchip">&#8377;1,000</span>
+            </div>
+            <p class="cft"><span>Do it &rarr; <b class="cpos">&#8377;500</b> back</span><span>Miss it &rarr; <b class="cneg">&#8377;450</b> to Goonj</span></p>
+          </figure>
+
+          <figure class="ui">
+            <p class="ceb cneg">&bull;&nbsp; Window closes in</p>
+            <p class="cbig num cneg" id="cdown">25:54</p>
+            <div class="csup">
+              <div class="cbar"><i></i></div>
+              <p class="csay" style="margin-top:10px;color:var(--ink);font-weight:700">Prove it now &mdash; one photo.</p>
+            </div>
+            <p class="cft"><span class="cink">Hit the gym today</span><span>Window 6:30&ndash;7:00 PM</span></p>
+          </figure>
+
+          <figure class="ui">
+            <p class="ceb">Go photograph</p>
+            <p class="cbig ctxt">The RO water filter</p>
+            <div class="csup cchips">
+              <span class="cchip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10.4c0 5.2-8 11.6-8 11.6s-8-6.4-8-11.6a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10.2" r="2.6"/></svg> Kitchen</span><span class="cchip">1 of your 7 items</span>
+            </div>
+            <p class="cft"><span><b class="cink">&#8377;200</b> riding on it</span><span>Shot in the app, in the window</span></p>
+          </figure>
+
+          <figure class="ui">
+            <p class="ceb">Back to you</p>
+            <p class="cbig num cpos">&#8377;500</p>
+            <p class="csup csay">You did it. Every rupee came home.</p>
+            <p class="cft"><span>Refunded to UPI</span><span>Within 24 hours</span><span>Lokt took nothing</span></p>
+          </figure>
+
+          <figure class="ui">
+            <p class="ceb">Promises kept in a row</p>
+            <p class="cbig num">23<em>in a row</em></p>
+            <div class="csup clocks"><svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"/><rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#C6FF3D"/><path d="M15.5 32l5 5 11.5-11.5" stroke="#0A0A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"/><rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#C6FF3D"/><path d="M15.5 32l5 5 11.5-11.5" stroke="#0A0A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"/><rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#C6FF3D"/><path d="M15.5 32l5 5 11.5-11.5" stroke="#0A0A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"/><rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#C6FF3D"/><path d="M15.5 32l5 5 11.5-11.5" stroke="#0A0A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"/><rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#C6FF3D"/><path d="M15.5 32l5 5 11.5-11.5" stroke="#0A0A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"/><rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#C6FF3D"/><path d="M15.5 32l5 5 11.5-11.5" stroke="#0A0A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"/><rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#C6FF3D"/><path d="M15.5 32l5 5 11.5-11.5" stroke="#0A0A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="26" height="26" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M16.5 21a7.5 7.5 0 0 1 15 0" stroke="#C6FF3D" stroke-width="7" stroke-linecap="round"/><rect x="7" y="20.5" width="34" height="22" rx="6.5" fill="#C6FF3D"/><path d="M15.5 32l5 5 11.5-11.5" stroke="#0A0A0C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <p class="cft"><span><b class="cink">31</b> best run</span><span><b class="cink">34 of 41</b> kept</span></p>
+          </figure>
         </div>
       </div>
 
       <div class="steps" id="steps">
+        <span class="spine" aria-hidden="true"><i id="spinefill"></i></span>
 
         <article class="step on" data-i="0">
           <div class="n"><em>01</em><i></i><b>Decide</b></div>
-          <h3>Pick what it's worth.</h3>
+          <h3>Pick what it&#39;s worth.</h3>
           <p>&#8377;20 to &#8377;5,000, set fresh every time. Enough to sting on a cold morning, never enough to hurt.</p>
-          <div class="phone"><img src="/assets/landing/screens/Create-3-Amount.jpg" alt="Choosing a stake amount" width="780" height="1688" loading="lazy"></div>
         </article>
 
         <article class="step" data-i="1">
           <div class="n"><em>02</em><i></i><b>Wait</b></div>
           <h3>The window opens.</h3>
           <p>You chose the hours. Once they start, the stake is live and backing out is off the table.</p>
-          <div class="phone"><img src="/assets/landing/screens/StakeDetail-WindowOpen.jpg" alt="A live stake counting down" width="780" height="1688" loading="lazy"></div>
         </article>
 
         <article class="step" data-i="2">
           <div class="n"><em>03</em><i></i><b>Prove</b></div>
           <h3>Show it happened.</h3>
           <p>One photo, shot in the app. On goals where a picture of you proves nothing, item check names something from your own home instead.</p>
-          <div class="phone"><img src="/assets/landing/screens/Spot-Reveal.jpg" alt="Lokt naming a household item" width="780" height="1688" loading="lazy"></div>
         </article>
 
         <article class="step" data-i="3">
           <div class="n"><em>04</em><i></i><b>Settle</b></div>
           <h3>Every rupee comes home.</h3>
-          <p>Your proof clears, the refund starts, and it's back in your UPI within 24 hours. Lokt takes nothing.</p>
-          <div class="phone"><img src="/assets/landing/screens/StakeDetail-Passed.jpg" alt="A kept stake and its refund" width="780" height="1688" loading="lazy"></div>
+          <p>Your proof clears, the refund starts, and it&#39;s back in your UPI within 24 hours. Lokt takes nothing.</p>
         </article>
 
         <article class="step" data-i="4">
           <div class="n"><em>05</em><i></i><b>Again</b></div>
           <h3>It starts adding up.</h3>
           <p>Kept stakes stack into a run. No leaderboards and no nudges &mdash; just a quiet count of the times you were good for it.</p>
-          <div class="phone"><img src="/assets/landing/screens/Streak.jpg" alt="A run of kept stakes" width="780" height="1688" loading="lazy"></div>
         </article>
 
       </div>
@@ -1000,52 +1162,62 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
   /* Nearest-to-viewport-centre, NOT a thin IntersectionObserver band — the
      band fired as soon as the next step's top edge crossed it, which switched
      the phone while the previous step's text was still the one being read. */
-  /* mirrors the CSS breakpoint where the stage flips from a side column to a
-     panel pinned at the top — keep the two numbers in step */
-  var mqStacked = window.matchMedia('(max-width: 980px)');
   var stageEl = document.querySelector('.stage'),
       steps = [].slice.call(document.querySelectorAll('#steps .step')),
-      shots = [].slice.call(document.querySelectorAll('#stack img')),
+      shots = [].slice.call(document.querySelectorAll('#stack .ui')),
       segs  = [].slice.call(document.querySelectorAll('#stageprog i')),
       curStep = -1, stepTick = false;
+
+  var spineFill = document.getElementById('spinefill'),
+      stepsEl = document.getElementById('steps');
+
+  /* the lime spine runs down to the active step's dot */
+  function fitSpine(i) {
+    if (!spineFill || !stepsEl || !steps[i]) return;
+    var top = stepsEl.getBoundingClientRect().top;
+    var n = steps[i].querySelector('.n');
+    var r = (n || steps[i]).getBoundingClientRect();
+    spineFill.style.height = Math.max(0, r.top + r.height / 2 - top) + 'px';
+  }
 
   function syncFlow() {
     stepTick = false;
     if (!steps.length) return;
-    /* Desktop: the phone is beside the text, so aim at the viewport centre.
-       Mobile: the phone is pinned to the top, so aim at the middle of what's
-       left below it — otherwise the focus line sits inside the phone. */
+    /* The panel is pinned at the top at every width, so the readable band is
+       whatever is left below it. Pick the topmost heading still inside that
+       band: the active heading then always sits just under the panel rather
+       than scrolling behind it. One rule, one layout. */
     var vh = window.innerHeight, sr = stageEl.getBoundingClientRect();
-    /* pinned = the phone is parked in the top band (mobile). On desktop the
-       stage is a tall column beside the text, so its bottom sits well past
-       0.62vh and this stays false. */
-    var pinned = mqStacked.matches &&
-                 sr.bottom > 0 && sr.bottom < vh * 0.62 && sr.top < vh * 0.25;
-    stageEl.classList.toggle('pinned', pinned);
-    var best = 0, i, r;
+    var spineEl = document.querySelector('.spine');
+    stageEl.classList.toggle('pinned',
+      sr.top <= parseFloat(getComputedStyle(stageEl).top) + 2 && sr.bottom > 0);
 
-    if (pinned) {
-      /* The readable band is only what's left under the phone, so pick the
-         topmost heading still inside it. The active heading then always sits
-         just below the phone instead of scrolling behind it. */
-      var line = sr.bottom + 16;
-      best = steps.length - 1;
-      for (i = 0; i < steps.length; i++) {
-        var h = steps[i].querySelector('h3');
-        if ((h ? h.getBoundingClientRect().top : steps[i].getBoundingClientRect().top) >= line) { best = i; break; }
-      }
-    } else {
-      var mid = vh / 2, bestD = Infinity;
-      for (i = 0; i < steps.length; i++) {
-        r = steps[i].getBoundingClientRect();
-        var d = Math.abs(r.top + r.height / 2 - mid);
-        if (d < bestD) { bestD = d; best = i; }
-      }
+    /* The readable band is whatever is left below the pinned panel. Centre the
+       whole heading+paragraph block in it — anchoring on the heading alone made
+       a step go active while its text was still off the bottom of the screen. */
+    /* Clip the spine to the band below the panel. The panel's scrim is graded —
+       deliberately open at the far sides so the section's texture reads through —
+       so a full-brightness lime line scrolling up behind it still showed through
+       beside the heading. --sclip is how much of the spine is currently covered. */
+    if (spineEl) {
+      var spr = spineEl.getBoundingClientRect();
+      spineEl.style.setProperty('--sclip', Math.max(0, sr.bottom - spr.top) + 'px');
+    }
+
+    var bandTop = Math.max(sr.bottom, 0), bandMid = (bandTop + vh) / 2;
+    var best = 0, bestD = Infinity, i;
+    for (i = 0; i < steps.length; i++) {
+      var h = steps[i].querySelector('h3'), par = steps[i].querySelector('p');
+      if (!h || !par) continue;
+      var c = (h.getBoundingClientRect().top + par.getBoundingClientRect().bottom) / 2;
+      var d = Math.abs(c - bandMid);
+      if (d < bestD) { bestD = d; best = i; }
     }
     if (best === curStep) return;
     curStep = best;
     steps.forEach(function (s, k) { s.classList.toggle('on', k === best); });
     shots.forEach(function (s, k) { s.classList.toggle('on', k === best); });
+    fitSpine(best);
     segs.forEach(function (s, k) {
       s.classList.toggle('on', k <= best);
       s.classList.toggle('now', k === best);
@@ -1054,7 +1226,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
   window.addEventListener('scroll', function () {
     if (!stepTick) { stepTick = true; requestAnimationFrame(syncFlow); }
   }, { passive: true });
-  window.addEventListener('resize', syncFlow);
+  window.addEventListener('resize', function () { syncFlow(); fitSpine(curStep); });
   syncFlow();
 
   /* ===== 7. stake builder =============================================== */
@@ -1203,6 +1375,23 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
     }, { threshold: .4 });
     dObs.observe(document.querySelector('.draw'));
   }
+
+  /* ---- the countdown on the "Wait" card actually runs ------------------- */
+  (function () {
+    var cd = document.getElementById('cdown');
+    if (!cd || calm || !HAS_IO) return;
+    var t = 25 * 60 + 54, iv = null;
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting && !iv) {
+          iv = setInterval(function () {
+            t = t > 0 ? t - 1 : 25 * 60 + 54;
+            cd.textContent = Math.floor(t / 60) + ':' + ('0' + (t % 60)).slice(-2);
+          }, 1000);
+        } else if (!e.isIntersecting && iv) { clearInterval(iv); iv = null; }
+      });
+    }, { threshold: .2 }).observe(document.getElementById('flow'));
+  })();
 
   /* ===== 9. gallery ===================================================== */
   var track = document.getElementById('track'),
