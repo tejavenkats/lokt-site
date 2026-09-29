@@ -402,6 +402,13 @@ section > .wrap-narrow > h2.title { margin-bottom: var(--sp-4); }
 
 .footer-copy { font-size: 12px; color: var(--muted); }
 
+/* social row: icon-only links on their own line under the legal links.
+   44x44 tap targets; the -13px pull aligns the first glyph with the text above. */
+.footer-social { display: flex; align-items: center; flex-basis: 100%; margin-left: -13px; }
+.footer-social a { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); }
+.footer-social a:hover { color: var(--text); }
+.footer-social svg { display: block; }
+
 /* ---------- legal pages ---------- */
 
 .legal-main { padding: 48px 0 72px; }
