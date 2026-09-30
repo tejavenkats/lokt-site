@@ -631,6 +631,37 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
   /* the mark still reads as a closed lock when motion is off */
   .sl-shackle,.sl-body{transform:none!important}
 }
+
+/* EARLY ACCESS FORM ---------------------------------------------------- */
+.anchor{display:block;position:relative;top:-90px;visibility:hidden}
+.ea{margin-top:26px;max-width:460px}
+.ea-row{margin-bottom:14px}
+.ea-lab{display:block;font-size:13px;letter-spacing:.02em;color:var(--mut);margin-bottom:6px}
+.ea-opt{color:var(--line2)}
+.ea-in{width:100%;height:52px;padding:0 15px;border-radius:12px;background:var(--card);
+  border:1px solid var(--line);color:var(--ink);font:16px/1 var(--body);
+  transition:border-color .18s ease,background .18s ease}
+.ea-in::placeholder{color:#55555F}
+.ea-in:focus{outline:none;border-color:var(--lime);background:var(--raise)}
+.ea-in:user-invalid{border-color:var(--red)}
+.ea-phone{display:flex;align-items:stretch;gap:8px}
+.ea-cc{display:inline-flex;align-items:center;padding:0 13px;border-radius:12px;
+  background:var(--raise);border:1px solid var(--line);color:var(--mut);
+  font:16px/1 var(--body);font-variant-numeric:tabular-nums}
+.ea-check{display:flex;align-items:flex-start;gap:10px;margin:4px 0 18px;cursor:pointer;
+  font-size:14px;color:var(--ink)}
+.ea-check input{width:18px;height:18px;margin-top:1px;accent-color:var(--lime);flex:0 0 auto}
+.ea-submit{width:100%}
+.ea-fine{margin-top:12px;font-size:13px;color:var(--mut)}
+/* Honeypot. Moved off-screen rather than display:none -- some bots skip hidden inputs, which
+   would defeat the point of having it. */
+.ea-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.ea-note{display:none;margin-top:18px;padding:13px 15px;border-radius:12px;
+  border:1px solid var(--line);background:var(--card);font-size:14.5px;line-height:1.5}
+.ea-note.on{display:block}
+.ea-note.ok{border-color:var(--lime);color:var(--ink)}
+.ea-note.bad{border-color:var(--red);color:var(--ink)}
+@media (max-width:560px){ .ea{max-width:none} }
 </style>
 </head>
 <body>
@@ -638,7 +669,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 <header class="top">
   <div class="wrap">
     <a class="mark" href="/" aria-label="Lokt home"><img src="/assets/landing/lokt-wordmark-white.png" alt="Lokt" width="84" height="42"></a>
-    <a class="btn btn--go" href="/contact/">Get early access</a>
+    <a class="btn btn--go" href="#early-access">Get early access</a>
   </div>
   <div class="prog" id="prog" aria-hidden="true"></div>
 </header>
@@ -659,7 +690,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
         <h1><span>Put money</span><span>on your</span><span>word.</span></h1>
         <p class="lede enter" style="--d:.34s">Pick a goal. Back it with your own cash. Prove it inside the window and every rupee comes home.</p>
         <div class="cta enter" style="--d:.42s">
-          <a class="btn btn--go btn--lg" href="/contact/">Get early access</a>
+          <a class="btn btn--go btn--lg" href="#early-access">Get early access</a>
           <a class="btn btn--lg" href="#flow">See how it goes</a>
         </div>
         <div class="pledge enter" style="--d:.5s">
@@ -1008,14 +1039,55 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 
   <!-- FOOTER ------------------------------------------------------------ -->
   <section class="foot" id="foot">
+    <a id="early-access" class="anchor" aria-hidden="true"></a>
     <div class="field" aria-hidden="true"><span class="spot" id="spot3"></span></div>
     <div class="wrap">
       <div class="grid">
         <div class="rise">
           <p class="eyebrow">Coming soon &middot; Android first</p>
           <h2>Make it cost something.</h2>
+          <div class="ea-note" id="eaNote" role="status" aria-live="polite"></div>
+
+          <form class="ea" id="eaForm" method="post"
+                action="https://stake-api-iys77syeja-el.a.run.app/v1/waitlist">
+            <div class="ea-row">
+              <label class="ea-lab" for="eaEmail">Email</label>
+              <input class="ea-in" id="eaEmail" name="email" type="email" required
+                     autocomplete="email" inputmode="email" placeholder="you@email.com">
+            </div>
+
+            <div class="ea-row">
+              <label class="ea-lab" for="eaPhone">Mobile</label>
+              <div class="ea-phone">
+                <span class="ea-cc">+91</span>
+                <input class="ea-in" id="eaPhone" name="phone" type="tel" required
+                       autocomplete="tel-national" inputmode="numeric"
+                       pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile">
+              </div>
+            </div>
+
+            <div class="ea-row">
+              <label class="ea-lab" for="eaNoteIn">What would you stake on? <span class="ea-opt">optional</span></label>
+              <input class="ea-in" id="eaNoteIn" name="note" type="text" maxlength="500"
+                     placeholder="Wake up at 6. Gym three times a week.">
+            </div>
+
+            <label class="ea-check">
+              <input type="checkbox" name="tester" value="on">
+              <span>Happy to be an early tester, and to be contacted about it.</span>
+            </label>
+
+            <div class="ea-hp" aria-hidden="true">
+              <label for="eaWebsite">Website</label>
+              <input id="eaWebsite" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            <button class="btn btn--go btn--lg ea-submit" type="submit">Get early access</button>
+            <p class="ea-fine">We'll message you when access opens. Nothing else, and no money
+              changes hands until you set up a stake yourself.</p>
+          </form>
+
           <div class="cta">
-            <a class="btn btn--go btn--lg" href="/contact/">Get early access</a>
             <a class="btn btn--lg" href="/terms/">Read the terms</a>
           </div>
         </div>
@@ -1529,6 +1601,38 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
       }, { threshold: 0 }).observe(host);
     } else { running = true; frame(); }
   })();
+})();
+
+/* EARLY ACCESS -------------------------------------------------------------
+   The form is a plain POST to the API and the server answers with a 303 back
+   to this page carrying ?joined=. That means no fetch, no CORS, and the form
+   still works with JavaScript disabled -- this block only renders the result
+   message, it is not required for the submission itself. */
+(function () {
+  var note = document.getElementById('eaNote');
+  if (!note) return;
+
+  var params = new URLSearchParams(location.search);
+  var joined = params.get('joined');
+  if (joined === null) return;
+
+  var MESSAGES = {
+    email: ['bad', "That email address does not look right. Check it and try again."],
+    phone: ['bad', "That mobile number does not look right \u2014 ten digits, starting 6 to 9."],
+    rate:  ['bad', "That is a lot of attempts from one place. Give it a few minutes."]
+  };
+
+  var state = joined === '1'
+    ? ['ok', "You are on the list. We will message you when access opens."]
+    : (MESSAGES[params.get('e')] || ['bad', "Something went wrong. Try again in a moment."]);
+
+  note.textContent = state[1];
+  note.classList.add('on', state[0]);
+
+  /* Drop the query so a refresh does not re-show a stale message, keeping the
+     anchor so the page stays put. */
+  history.replaceState({}, '', location.pathname + '#early-access');
+  note.scrollIntoView({ block: 'center', behavior: 'smooth' });
 })();
 </script>
 </body>
