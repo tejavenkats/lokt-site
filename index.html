@@ -634,7 +634,10 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 
 /* EARLY ACCESS FORM ---------------------------------------------------- */
 .anchor{display:block;position:relative;top:-90px;visibility:hidden}
-.ea{margin-top:26px;max-width:460px}
+.ios-hint{margin-top:16px;font-size:14.5px;color:var(--mut)}
+.ios-hint a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.ea-intro{margin-top:26px;max-width:46ch;font-size:16px;color:var(--mut)}
+.ea{margin-top:18px;max-width:460px}
 .ea-row{margin-bottom:14px}
 .ea-lab{display:block;font-size:13px;letter-spacing:.02em;color:var(--mut);margin-bottom:6px}
 .ea-opt{color:var(--line2)}
@@ -669,7 +672,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 <header class="top">
   <div class="wrap">
     <a class="mark" href="/" aria-label="Lokt home"><img src="/assets/landing/lokt-wordmark-white.png" alt="Lokt" width="84" height="42"></a>
-    <a class="btn btn--go" href="#early-access">Get early access</a>
+    <a class="btn btn--go" href="https://play.google.com/store/apps/details?id=com.lokt.app" rel="noopener">Get it on Android</a>
   </div>
   <div class="prog" id="prog" aria-hidden="true"></div>
 </header>
@@ -686,13 +689,14 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 
     <div class="wrap grid">
       <div>
-        <p class="eyebrow enter" style="--d:.02s">Coming soon &middot; Android first</p>
+        <p class="eyebrow enter" style="--d:.02s">Live on Android &middot; iOS next</p>
         <h1><span>Put money</span><span>on your</span><span>word.</span></h1>
         <p class="lede enter" style="--d:.34s">Pick a goal. Back it with your own cash. Prove it inside the window and every rupee comes home.</p>
         <div class="cta enter" style="--d:.42s">
-          <a class="btn btn--go btn--lg" href="#early-access">Get early access</a>
+          <a class="btn btn--go btn--lg" href="https://play.google.com/store/apps/details?id=com.lokt.app" rel="noopener">Get it on Android</a>
           <a class="btn btn--lg" href="#flow">See how it goes</a>
         </div>
+        <p class="ios-hint enter" style="--d:.46s">On iPhone? <a href="#early-access">Join the iOS list</a>.</p>
         <div class="pledge enter" style="--d:.5s">
           <span><b>&#8377;20&ndash;&#8377;5,000</b> a stake</span>
           <span><b>Free</b> to cancel before the window</span>
@@ -1044,8 +1048,15 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
     <div class="wrap">
       <div class="grid">
         <div class="rise">
-          <p class="eyebrow">Coming soon &middot; Android first</p>
+          <p class="eyebrow">On Android now &middot; iOS next</p>
           <h2>Make it cost something.</h2>
+          <div class="cta" style="margin-top:22px">
+            <a class="btn btn--go btn--lg" href="https://play.google.com/store/apps/details?id=com.lokt.app" rel="noopener">Get it on Android</a>
+          </div>
+
+          <p class="ea-intro">On iPhone? Lokt isn’t there yet. Leave your details and we’ll
+            tell you the day it lands — nothing before that.</p>
+
           <div class="ea-note" id="eaNote" role="status" aria-live="polite"></div>
 
           <form class="ea" id="eaForm" method="post"
@@ -1074,7 +1085,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 
             <label class="ea-check">
               <input type="checkbox" name="tester" value="on">
-              <span>Happy to be an early tester, and to be contacted about it.</span>
+              <span>Happy to test an early iOS build, and to be contacted about it.</span>
             </label>
 
             <div class="ea-hp" aria-hidden="true">
@@ -1082,9 +1093,9 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
               <input id="eaWebsite" name="website" type="text" tabindex="-1" autocomplete="off">
             </div>
 
-            <button class="btn btn--go btn--lg ea-submit" type="submit">Get early access</button>
-            <p class="ea-fine">We'll message you when access opens. Nothing else, and no money
-              changes hands until you set up a stake yourself.</p>
+            <button class="btn btn--go btn--lg ea-submit" type="submit">Tell me when iOS lands</button>
+            <p class="ea-fine">We'll message you when the iOS app is ready. Nothing else, and no
+              money changes hands until you set up a stake yourself.</p>
           </form>
 
           <div class="cta">
