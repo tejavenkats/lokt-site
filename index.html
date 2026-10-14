@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lokt — put money on your word</title>
-<meta name="description" content="Pick a goal. Back it with your own cash. Prove it inside the window and every rupee comes home. Miss it and 90% goes to the charity you picked.">
+<meta name="description" content="Pick a goal. Back it with your own cash. Prove it inside the window and every rupee comes home. Miss it and the money's gone, most of it to a charity you picked.">
 <meta name="theme-color" content="#0A0A0C">
 <meta property="og:title" content="Lokt — put money on your word">
 <meta property="og:description" content="Back a goal with your own cash. Prove it in the window and every rupee comes home.">
@@ -734,7 +734,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
             </div>
             <div class="row">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5C6C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-              <span>Miss it &mdash; <b class="num" id="ngoAmt" style="color:var(--red)">&#8377;450</b> to <span id="ngoName">Goonj</span>, <span class="num" id="feeAmt">&#8377;50</span> to Lokt</span>
+              <span>Miss it &rarr; most of <b class="num" id="ngoAmt" style="color:var(--red)">&#8377;500</b> to <span id="ngoName">Goonj</span></span>
             </div>
           </div>
 
@@ -758,7 +758,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
           <p class="sub" id="lockSub">Wake up at 7:00, tomorrow. Once the window opens, the only way out is to do it.</p>
           <p class="split">
             <span>Do it &rarr; <b style="color:var(--grn)" class="num" id="lockOk">&#8377;500</b> back</span>
-            <span>Miss it &rarr; <b style="color:var(--red)" class="num" id="lockNgo">&#8377;450</b> to <span id="lockName">Goonj</span>, <span class="num" id="lockFee">&#8377;50</span> to Lokt</span>
+            <span>Miss it &rarr; most of <b style="color:var(--red)" class="num" id="lockNgo">&#8377;500</b> to <span id="lockName">Goonj</span></span>
           </p>
           <button class="btn again" id="againBtn" type="button">Build another</button>
         </div>
@@ -797,7 +797,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
               <span class="cchip">&#8377;100</span><span class="cchip">&#8377;200</span>
               <span class="cchip sel">&#8377;500</span><span class="cchip">&#8377;1,000</span>
             </div>
-            <p class="cft"><span>Do it &rarr; <b class="cpos">&#8377;500</b> back</span><span>Miss it &rarr; <b class="cneg">&#8377;450</b> to Goonj</span></p>
+            <p class="cft"><span>Do it &rarr; <b class="cpos">&#8377;500</b> back</span><span>Miss it &rarr; most of <b class="cneg">&#8377;500</b> to Goonj</span></p>
           </figure>
 
           <figure class="ui">
@@ -953,7 +953,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
           </span>
           <div>
             <h3>You miss it</h3>
-            <p><span class="big" style="color:var(--red)">90% goes to the charity you picked.</span> Lokt keeps 10% to run the service.</p>
+            <p><span class="big" style="color:var(--red)">Most of it goes to the charity you picked.</span></p>
           </div>
         </div>
 
@@ -1359,7 +1359,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
 
   var amt = document.getElementById('amt'), rail = document.getElementById('rail'),
       okAmt = document.getElementById('okAmt'), ngoAmt = document.getElementById('ngoAmt'),
-      feeAmt = document.getElementById('feeAmt'), ngoNm = document.getElementById('ngoName'),
+      ngoNm = document.getElementById('ngoName'),
       railFill = document.getElementById('railfill');
 
   function rupee(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
@@ -1374,15 +1374,13 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
     })(t0);
   }
 
-  var shown = { ok: 500, ngo: 450 };
-  /* The 90/10 split is always shown in full, never implied. */
+  var shown = { ok: 500, ngo: 500 };
+  /* Everyday copy never quotes the split; the signed contract and terms carry it. */
   function paint(roll) {
     var v = Math.max(20, Math.min(5000, Number(amt.value) || 20));
-    var fee = Math.round(v * 0.10), give = v - fee;
-    if (roll) { rollTo(okAmt, shown.ok, v, 420); rollTo(ngoAmt, shown.ngo, give, 420); pop(okAmt); pop(ngoAmt); }
-    else { okAmt.textContent = rupee(v); ngoAmt.textContent = rupee(give); }
-    shown.ok = v; shown.ngo = give;
-    feeAmt.textContent = rupee(fee);
+    if (roll) { rollTo(okAmt, shown.ok, v, 420); rollTo(ngoAmt, shown.ngo, v, 420); pop(okAmt); pop(ngoAmt); }
+    else { okAmt.textContent = rupee(v); ngoAmt.textContent = rupee(v); }
+    shown.ok = v; shown.ngo = v;
     railFill.style.width = ((v - 20) / (5000 - 20) * 100) + '%';
   }
   amt.addEventListener('input', function () { rail.value = amt.value; paint(false); });
@@ -1406,8 +1404,7 @@ details p{margin-top:-2px;padding-bottom:20px;color:var(--mut);max-width:62ch}
     document.getElementById('lockSub').textContent =
       state.goal + ', ' + state.when + '. Once the window opens, the only way out is to do it.';
     document.getElementById('lockOk').textContent = rupee(v);
-    document.getElementById('lockNgo').textContent = rupee(v - Math.round(v * 0.10));
-    document.getElementById('lockFee').textContent = rupee(Math.round(v * 0.10));
+    document.getElementById('lockNgo').textContent = rupee(v);
     document.getElementById('lockName').textContent = state.ngo;
     bface.classList.add('gone');
     blocked.classList.add('on');
